@@ -1,0 +1,533 @@
+/* ═══════════════════════════════════════════════════════════════
+   ABB Theme  –  Digitalization Review Suite
+   Global stylesheet. Import on every page EXCEPT the timer iframe.
+═══════════════════════════════════════════════════════════════ */
+
+/* ── 1. Design Tokens ─────────────────────────────────────── */
+:root {
+  /* Brand colours */
+  --abb-red:        #FF000F;
+  --abb-red-dark:   #cc000c;
+  --abb-red-light:  #ff957e;
+  --abb-red-pale:   #ffdccd;
+
+  --abb-lilac:      #6764f6;
+  --abb-lilac-1:    #93a1ff;
+  --abb-lilac-2:    #e4e7ff;
+
+  /* Surface palette */
+  --bg-page:        #0d0d0d;
+  --bg-card:        #161616;
+  --bg-surface:     #1e1e1e;
+  --bg-hover:       #252525;
+  --bg-border:      #2c2c2c;
+
+  /* Text */
+  --text-primary:   #f0f0f0;
+  --text-secondary: #9a9a9a;
+  --text-muted:     #555555;
+  --white:          #ffffff;
+
+  /* Layout */
+  --nav-height:     52px;
+  --radius-sm:      4px;
+  --radius-md:      8px;
+  --radius-lg:      12px;
+
+  /* Motion */
+  --ease:           0.2s ease;
+
+  /* Typography */
+  --font:           'Segoe UI', Arial, sans-serif;
+}
+
+
+/* ── 2. Reset ─────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img { display: block; max-width: 100%; }
+
+button, input, select, textarea {
+  font-family: var(--font);
+}
+
+
+/* ── 3. Typography ────────────────────────────────────────── */
+h1, h2, h3, h4, h5 {
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  color: var(--text-primary);
+}
+
+p { line-height: 1.65; }
+
+
+/* ── 4. Buttons ───────────────────────────────────────────── */
+.btn {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             8px;
+  padding:         12px 28px;
+  font-size:       0.9rem;
+  font-weight:     600;
+  letter-spacing:  0.04em;
+  border:          none;
+  border-radius:   var(--radius-md);
+  cursor:          pointer;
+  text-decoration: none;
+  transition:      background var(--ease),
+                   transform   var(--ease),
+                   box-shadow  var(--ease),
+                   opacity     var(--ease);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Primary – ABB Red */
+.btn-primary {
+  background: var(--abb-red);
+  color:      var(--white);
+}
+.btn-primary:hover:not(:disabled) {
+  background:  var(--abb-red-dark);
+  transform:   translateY(-1px);
+  box-shadow:  0 6px 20px rgba(255, 0, 15, 0.3);
+}
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Ghost */
+.btn-ghost {
+  background: transparent;
+  color:      var(--text-secondary);
+  border:     1px solid var(--bg-border);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--bg-surface);
+  color:      var(--text-primary);
+}
+
+/* Full-width helper */
+.btn-full { width: 100%; }
+
+
+/* ── 5. Forms ─────────────────────────────────────────────── */
+.form-group {
+  display:        flex;
+  flex-direction: column;
+  gap:            7px;
+  margin-bottom:  22px;
+}
+
+.form-group label {
+  font-size:      0.78rem;
+  font-weight:    700;
+  color:          var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.form-group input {
+  background:    var(--bg-surface);
+  border:        1px solid var(--bg-border);
+  border-radius: var(--radius-md);
+  color:         var(--text-primary);
+  font-size:     0.95rem;
+  padding:       13px 14px;
+  outline:       none;
+  width:         100%;
+  transition:    border-color var(--ease), box-shadow var(--ease);
+}
+
+.form-group input::placeholder {
+  color: var(--text-muted);
+}
+
+.form-group input:focus {
+  border-color: var(--abb-red);
+  box-shadow:   0 0 0 3px rgba(255, 0, 15, 0.14);
+}
+
+/* Input + icon wrapper */
+.input-wrapper {
+  position: relative;
+  display:  flex;
+  align-items: center;
+}
+
+.input-wrapper input {
+  padding-right: 44px;
+}
+
+.toggle-pw {
+  position:   absolute;
+  right:      12px;
+  background: transparent;
+  border:     none;
+  cursor:     pointer;
+  font-size:  1rem;
+  color:      var(--text-muted);
+  padding:    4px;
+  line-height: 1;
+  transition: color var(--ease);
+}
+.toggle-pw:hover { color: var(--text-secondary); }
+
+
+/* ── 6. Navigation Bar (all protected pages) ──────────────── */
+.abb-nav {
+  position:        fixed;
+  top:             0;
+  left:            0;
+  right:           0;
+  height:          var(--nav-height);
+  background:      var(--bg-card);
+  border-bottom:   2px solid var(--abb-red);
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         0 20px;
+  z-index:         9999;
+  gap:             12px;
+}
+
+/* Left cluster: logo + divider + page title */
+.nav-left {
+  display:     flex;
+  align-items: center;
+  gap:         14px;
+  flex:        1;
+  min-width:   0;
+}
+
+.nav-logo {
+  height:    28px;
+  width:     auto;
+  flex-shrink: 0;
+}
+
+/* Fallback text if logo asset missing */
+.nav-logo-fallback {
+  font-size:      0.85rem;
+  font-weight:    900;
+  color:          var(--abb-red);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  flex-shrink:    0;
+}
+
+.nav-divider {
+  width:       1px;
+  height:      22px;
+  background:  var(--bg-border);
+  flex-shrink: 0;
+}
+
+.nav-title {
+  font-size:      0.82rem;
+  font-weight:    600;
+  color:          var(--text-secondary);
+  letter-spacing: 0.05em;
+  white-space:    nowrap;
+  overflow:       hidden;
+  text-overflow:  ellipsis;
+}
+
+/* Right cluster: user info + badge + logout */
+.nav-right {
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+  flex-shrink: 0;
+}
+
+.nav-user {
+  font-size:      0.82rem;
+  font-weight:    500;
+  color:          var(--text-secondary);
+  text-transform: capitalize;
+  white-space:    nowrap;
+}
+
+/* Role badge */
+.nav-role-badge {
+  display:        inline-block;
+  padding:        3px 10px;
+  border-radius:  20px;
+  font-size:      0.68rem;
+  font-weight:    700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border:         1px solid var(--bg-border);
+  background:     var(--bg-surface);
+  color:          var(--text-secondary);
+  white-space:    nowrap;
+}
+
+.nav-role-badge.admin {
+  background:   rgba(255, 0, 15, 0.12);
+  border-color: rgba(255, 0, 15, 0.35);
+  color:        var(--abb-red-light);
+}
+
+.nav-role-badge.viewer {
+  background:   rgba(103, 100, 246, 0.12);
+  border-color: rgba(103, 100, 246, 0.35);
+  color:        var(--abb-lilac-1);
+}
+
+/* Logout button */
+.nav-logout-btn {
+  background:     transparent;
+  border:         1px solid var(--bg-border);
+  color:          var(--text-secondary);
+  font-size:      0.78rem;
+  font-weight:    600;
+  padding:        5px 14px;
+  border-radius:  var(--radius-sm);
+  cursor:         pointer;
+  letter-spacing: 0.04em;
+  transition:     background var(--ease),
+                  border-color var(--ease),
+                  color var(--ease);
+  white-space:    nowrap;
+}
+.nav-logout-btn:hover {
+  background:   var(--abb-red);
+  border-color: var(--abb-red);
+  color:        var(--white);
+}
+
+
+/* ── 7. Login Page Layout ─────────────────────────────────── */
+.login-page {
+  overflow: hidden;
+}
+
+.login-wrapper {
+  display:    flex;
+  min-height: 100vh;
+}
+
+/* ── Left: Theme banner (login only) ── */
+.login-banner {
+  flex:       0 0 56%;
+  position:   relative;
+  background: #0a0a0a;
+  overflow:   hidden;
+}
+
+.banner-img {
+  position:   absolute;
+  inset:      0;
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
+  opacity:    0.8;
+}
+
+.banner-overlay {
+  position:        absolute;
+  inset:           0;
+  background:      linear-gradient(
+    155deg,
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(255, 0, 15, 0.12) 60%,
+    rgba(0, 0, 0, 0.85) 100%
+  );
+  display:         flex;
+  flex-direction:  column;
+  justify-content: flex-end;
+  padding:         48px 52px;
+}
+
+/* ETO logo pinned top-left of banner */
+.eto-logo-banner {
+  position: absolute;
+  top:      36px;
+  left:     48px;
+  height:   34px;
+  width:    auto;
+}
+
+/* Text block at bottom of banner */
+.banner-text {
+  position: relative;
+  z-index:  1;
+}
+
+.banner-eyebrow {
+  font-size:      0.78rem;
+  font-weight:    700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color:          var(--abb-red-light);
+  margin-bottom:  10px;
+}
+
+.banner-text h2 {
+  font-size:   2.5rem;
+  color:       var(--white);
+  line-height: 1.1;
+  margin-bottom: 12px;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
+}
+
+.banner-sub {
+  font-size: 1rem;
+  color:     rgba(255, 255, 255, 0.55);
+}
+
+/* Red accent strip at the very bottom of the banner */
+.banner-accent-bar {
+  position:   absolute;
+  bottom:     0;
+  left:       0;
+  right:      0;
+  height:     4px;
+  background: var(--abb-red);
+}
+
+
+/* ── Right: Form panel ── */
+.login-panel {
+  flex:            0 0 44%;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  background:      var(--bg-page);
+  padding:         48px 40px;
+}
+
+.login-card {
+  width:     100%;
+  max-width: 360px;
+}
+
+/* Card header */
+.login-header {
+  text-align:    center;
+  margin-bottom: 40px;
+}
+
+.eto-logo-form {
+  height:        36px;
+  width:         auto;
+  margin:        0 auto 20px;
+}
+
+.login-header h1 {
+  font-size:     1.7rem;
+  margin-bottom: 6px;
+}
+
+.login-header p {
+  font-size: 0.88rem;
+  color:     var(--text-secondary);
+}
+
+/* Error banner */
+.login-error {
+  display:       none;
+  background:    rgba(255, 0, 15, 0.08);
+  border:        1px solid rgba(255, 0, 15, 0.28);
+  border-left:   3px solid var(--abb-red);
+  border-radius: var(--radius-md);
+  color:         var(--abb-red-light);
+  font-size:     0.84rem;
+  padding:       11px 14px;
+  margin-bottom: 18px;
+  line-height:   1.5;
+}
+
+.login-error.visible {
+  display: block;
+}
+
+/* Footer note */
+.login-footer {
+  margin-top:    32px;
+  padding-top:   20px;
+  border-top:    1px solid var(--bg-border);
+  text-align:    center;
+  font-size:     0.72rem;
+  color:         var(--text-muted);
+  letter-spacing: 0.03em;
+}
+
+
+/* ── 8. Responsive ────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .login-banner { flex: 0 0 48%; }
+  .login-panel  { flex: 0 0 52%; padding: 40px 28px; }
+}
+
+@media (max-width: 680px) {
+  .login-page    { overflow: auto; }
+  .login-wrapper { flex-direction: column; }
+
+  .login-banner {
+    flex:   none;
+    height: 240px;
+    width:  100%;
+  }
+
+  .eto-logo-banner {
+    top:    20px;
+    left:   20px;
+    height: 26px;
+  }
+
+  .banner-overlay { padding: 20px 24px; }
+
+  .banner-text h2 {
+    font-size:     1.6rem;
+    margin-bottom: 6px;
+  }
+
+  .login-panel {
+    flex:       1;
+    padding:    36px 24px;
+    min-height: 0;
+  }
+
+  /* Trim nav on small screens */
+  .abb-nav .nav-title   { display: none; }
+  .abb-nav .nav-divider { display: none; }
+  .nav-user             { display: none; }
+}
+
+@media (max-width: 400px) {
+  .login-panel { padding: 28px 16px; }
+  .nav-role-badge { display: none; }
+}
