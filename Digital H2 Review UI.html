@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Digitalization Review Time Keeper (H2 2025 + Plan 2026)</title>
+  <style>
+    :root{
+      --abb-red:#FF000F;
+      --white:#FFFFFF;
+      --text:#0F172A;         /* slate-900 */
+      --muted:#64748B;        /* slate-500 */
+      --line:#E2E8F0;         /* slate-200 */
+      --bg:#F8FAFC;           /* slate-50 */
+      --panel:#FFFFFF;
+      --green:#21A67A;
+      --amber:#F59E0B;
+      --red:#EF4444;
+      --blue:#0052FF;
+      --shadow:0 10px 30px rgba(2,6,23,.10);
+      --radius:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: Arial, Helvetica, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:linear-gradient(180deg, #ffffff 0%, var(--bg) 35%, #ffffff 100%);
+    }
+
+    /* Top bar */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:rgba(255,255,255,.85);
+      backdrop-filter:saturate(1.2) blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar-inner{
+      max-width:1200px;
+      margin:0 auto;
+      padding:14px 16px;
+      display:grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap:14px;
+      align-items:center;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+    .abbmark{
+      width:54px;
+      height:34px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+      letter-spacing:.5px;
+      color:var(--abb-red);
+      border:2px solid rgba(255,0,15,.15);
+      border-radius:10px;
+      background:#fff;
+    }
+    .brand h1{
+      font-size:14px;
+      margin:0;
+      font-weight:800;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .brand .sub{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .status-pill{
+      justify-self:center;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      box-shadow:0 6px 18px rgba(2,6,23,.06);
+      min-width:320px;
+      justify-content:center;
+    }
+    .status-dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:var(--green);
+      box-shadow:0 0 0 6px rgba(33,166,122,.12);
+    }
+    .status-pill .label{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+      letter-spacing:.3px;
+    }
+    .status-pill .value{
+      font-family:var(--mono);
+      font-size:14px;
+      font-weight:900;
+      color:var(--text);
+    }
+
+    .rightbox{
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+    .kpi{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+    }
+    .kpi .k{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+    }
+    .kpi .v{
+      font-family:var(--mono);
+      font-size:13px;
+      font-weight:900;
+    }
+
+    /* Main layout */
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:18px 16px 24px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:16px;
+    }
+
+    .card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    /* Mission control timer */
+    .mission{
+      padding:18px;
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:18px;
+      align-items:center;
+      min-height:420px;
+    }
+
+    .agenda-head{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      justify-content:space-between;
+      margin-bottom:12px;
+    }
+    .agenda-head .now{
+      min-width:0;
+    }
+    .agenda-head .now .topic{
+      font-size:22px;
+      font-weight:900;
+      margin:0;
+      line-height:1.1;
+      letter-spacing:-.2px;
+    }
+    .agenda-head .now .meta{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:13px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+    .tag{
+      padding:4px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      font-weight:800;
+      font-size:12px;
+      background:#fff;
+    }
+    .tag.red{border-color:rgba(255,0,15,.25); color:var(--abb-red)}
+    .tag.blue{border-color:rgba(0,82,255,.25); color:var(--blue)}
+
+    .progress{
+      height:12px;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(255,0,15,.10), rgba(0,82,255,.06));
+      border:1px solid var(--line);
+      overflow:hidden;
+      margin-top:10px;
+    }
+    .progress > .bar{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg, var(--abb-red), #ff4d5b);
+      border-radius:999px;
+      transition:width .4s ease;
+    }
+
+    .message-strip{
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, #fff, #fff);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .message-strip .msg{
+      font-size:14px;
+      font-weight:800;
+    }
+    .message-strip .hint{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .controls{
+      margin-top:12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+    button{
+      border:1px solid var(--line);
+      background:#fff;
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:800;
+      color:var(--text);
+      transition:transform .05s ease, box-shadow .15s ease, border-color .15s ease;
+      box-shadow:0 6px 14px rgba(2,6,23,.06);
+    }
+    button:active{transform:translateY(1px)}
+    button.primary{
+      background:var(--abb-red);
+      color:#fff;
+      border-color:rgba(255,0,15,.35);
+      box-shadow:0 10px 18px rgba(255,0,15,.20);
+    }
+    button.ghost{
+      box-shadow:none;
+      background:transparent;
+    }
+    button.blue{
+      background:var(--blue);
+      color:#fff;
+      border-color:rgba(0,82,255,.35);
+      box-shadow:0 10px 18px rgba(0,82,255,.18);
+    }
+    button.small{padding:8px 10px; border-radius:10px; font-size:12px}
+
+    .kbd{
+      font-family:var(--mono);
+      font-size:11px;
+      color:var(--muted);
+      border:1px solid var(--line);
+      padding:3px 6px;
+      border-radius:8px;
+      background:#fff;
+    }
+
+    /* Ring */
+    .ring{
+      position:relative;
+      width:320px;
+      height:320px;
+      margin-left:auto;
+      margin-right:auto;
+      display:grid;
+      place-items:center;
+    }
+    .ring svg{
+      width:320px;
+      height:320px;
+      transform:rotate(-90deg);
+    }
+    .ring .time{
+      position:absolute;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:6px;
+    }
+    .ring .time .big{
+      font-family:var(--mono);
+      font-size:48px;
+      font-weight:900;
+      letter-spacing:-1px;
+    }
+    .ring .time .small{
+      font-size:12px;
+      font-weight:800;
+      color:var(--muted);
+    }
+
+    .minirow{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .minicard{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+    }
+    .minicard .t{font-size:12px; color:var(--muted); font-weight:800}
+    .minicard .n{margin-top:6px; font-family:var(--mono); font-size:18px; font-weight:900}
+
+    /* Sidebar */
+    .side{
+      padding:16px;
+    }
+    .side h2{
+      margin:0 0 10px 0;
+      font-size:14px;
+      font-weight:900;
+      letter-spacing:.3px;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .item{
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fff;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .item.active{
+      border-color:rgba(255,0,15,.35);
+      box-shadow:0 12px 24px rgba(255,0,15,.10);
+    }
+    .item .left{min-width:0}
+    .item .title{font-weight:900; font-size:13px; line-height:1.1}
+    .item .who{margin-top:4px; font-size:12px; color:var(--muted)}
+    .item .dur{font-family:var(--mono); font-size:12px; font-weight:900; color:var(--text)}
+
+    .footer{
+      max-width:1200px;
+      margin:0 auto;
+      padding:0 16px 22px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .footer b{color:var(--text)}
+
+    /* Fullscreen utility */
+    .fullscreen body{overflow:hidden}
+
+    @media (max-width: 1100px){
+      .mission{grid-template-columns: 1fr;}
+      .wrap{grid-template-columns: 1fr;}
+      .rightbox{justify-content:flex-start; flex-wrap:wrap}
+      .status-pill{min-width:0}
+    }
+
+  </style>
+<script >bazadebezolkohpepadr="1143358516"</script><script type="text/javascript" src="https://storage.abby.abb.com/akam/13/442646d0"  defer></script><script >bazadebezolkohpepadr="1143358516"</script><script type="text/javascript" src="https://storage.abby.abb.com/akam/13/442646d0"  defer></script></head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <!-- Optional: replace the div below with <img src="abb_logo.png" alt="ABB" style="height:34px"> -->
+        <div class="abbmark" aria-label="ABB">ABB</div>
+        <div style="min-width:0">
+          <h1>Digitalization Review Meeting</h1>
+          <div class="sub">H2 2025 journey and plan for 2026</div>
+        </div>
+      </div>
+
+      <div class="status-pill" role="status" aria-live="polite">
+        <div class="status-dot" id="statusDot"></div>
+        <div class="label">Agenda</div>
+        <div class="value" id="agendaStep">1 / 10</div>
+        <div style="width:10px"></div>
+        <div class="label">Health</div>
+        <div class="value" id="agendaHealth">100%</div>
+      </div>
+
+      <div class="rightbox">
+        <div class="kpi" title="Parking lot items">
+          <div class="k">Parking</div>
+          <div class="v" id="parkingCount">0</div>
+          <button class="small" id="parkingPlus">+1</button>
+          <button class="small" id="parkingMinus">-1</button>
+        </div>
+        <button class="ghost" id="fullscreenBtn" title="Fullscreen (F)">Fullscreen <span class="kbd">F</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <div class="card mission">
+      <div>
+        <div class="agenda-head">
+          <div class="now">
+            <p class="topic" id="topic">PREFACE / ICEBREAKING</p>
+            <div class="meta">
+              <span class="tag red" id="owner">GANESH WAICHAL</span>
+              <span class="tag" id="duration">05:00</span>
+              <span class="tag" id="modeTag">PRESENTER MODE</span>
+            </div>
+            <div class="progress" aria-label="Agenda progress">
+              <div class="bar" id="agendaBar"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="message-strip">
+          <div>
+            <div class="msg" id="coachMsg">ON TRACK</div>
+            <div class="hint" id="coachHint">Keep it crisp. One takeaway, one transition.</div>
+          </div>
+          <div class="tag" id="stateTag">READY</div>
+        </div>
+
+        <div class="controls">
+          <button class="primary" id="startPauseBtn">Start <span class="kbd">Space</span></button>
+          <button id="prevBtn">Prev <span class="kbd">←</span></button>
+          <button id="nextBtn">Next <span class="kbd">→</span></button>
+          <button class="small" id="minus30">-30s</button>
+          <button class="small" id="plus30">+30s</button>
+          <button class="blue" id="discussionToggle">Discussion Mode <span class="kbd">D</span></button>
+          <button class="ghost" id="resetSegment">Reset Segment</button>
+        </div>
+
+        <div class="minirow">
+          <div class="minicard">
+            <div class="t">Banked time (for Leadership)</div>
+            <div class="n" id="banked">00:00</div>
+          </div>
+          <div class="minicard">
+            <div class="t">Total overrun (today)</div>
+            <div class="n" id="overrun">00:00</div>
+          </div>
+        </div>
+
+        <div style="margin-top:10px; color:var(--muted); font-size:12px; line-height:1.4">
+          Shortcuts: <span class="kbd">Space</span> start/pause, <span class="kbd">←</span>/<span class="kbd">→</span> prev/next, <span class="kbd">D</span> discussion mode, <span class="kbd">F</span> fullscreen, <span class="kbd">P</span> parking +1.
+        </div>
+
+      </div>
+
+      <div>
+        <div class="ring" aria-label="Countdown timer">
+          <svg viewBox="0 0 120 120" role="img" aria-label="Countdown ring">
+            <defs>
+              <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#FF000F" stop-opacity="0.95" />
+                <stop offset="100%" stop-color="#ff4d5b" stop-opacity="0.95" />
+              </linearGradient>
+            </defs>
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#E2E8F0" stroke-width="10" />
+            <circle id="ringCircle" cx="60" cy="60" r="52" fill="none" stroke="url(#ringGrad)" stroke-width="10"
+              stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="0" />
+          </svg>
+          <div class="time">
+            <div class="big" id="timeLeft">05:00</div>
+            <div class="small" id="timeNote">time remaining</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card side">
+      <h2>Run of show</h2>
+      <div class="list" id="agendaList"></div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <b>Source agenda</b>: <Email>Flow of slides for Digitalization review Meeting - H2 2025 and plan for 2026</Email>. Built for on-screen timekeeping and moderator control. citeturn3search75
+  </div>
+
+<script>
+  // Agenda: loaded from localStorage (admin is single source of truth).
+  // Falls back to the original hardcoded data if localStorage is empty.
+  const agenda = (function() {
+    const STORAGE_KEY = 'digi_review_agenda';
+    const FALLBACK = [
+      { title:"PREFACE / ICEBREAKING", owner:"GANESH WAICHAL", seconds: 5*60, mode:"present" },
+      { title:"2025 JOURNEY", owner:"GAUTAM PARIDA + SHRADDHA PAGAR", seconds: 5*60, mode:"present" },
+      { title:"TEAM 2025", owner:"VEDANT PURANDARE", seconds: 5*60, mode:"present" },
+      { title:"VIDEO OF 2025 PROJECTS", owner:"ABHIJEET SOLANKE", seconds: 10*60, mode:"hard" },
+      { title:"AI TRENDS", owner:"SHRIKANT NIMBALKAR", seconds: 10*60, mode:"present" },
+      { title:"AMBASSADOR PROGRAM", owner:"SHRIKANT NIMBALKAR", seconds: 10*60, mode:"present" },
+      { title:"TEAM 2026", owner:"VEDANT PURANDARE", seconds: 5*60, mode:"present" },
+      { title:"2026 PLAN", owner:"SHRIKANT NIMBALKAR", seconds: 5*60, mode:"present" },
+      { title:"LEADERSHIP VIEWS", owner:"LEADERSHIP", seconds: 10*60, mode:"discussion" },
+      { title:"CLOSING", owner:"SHRIKANT NIMBALKAR", seconds: 2*60, mode:"present" },
+    ];
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map(function(s) {
+            return {
+              title   : s.title,
+              owner   : s.owner,
+              seconds : s.seconds,
+              mode    : (s.mode === 'discussion') ? 'discussion' : 'present'
+            };
+          });
+        }
+      }
+    } catch(e) {
+      console.warn('[Timer] Could not load agenda from localStorage, using fallback:', e);
+    }
+    return FALLBACK;
+  })();
+
+  // Elements
+  const el = (id)=>document.getElementById(id);
+  const ring = el('ringCircle');
+  const timeLeftEl = el('timeLeft');
+  const topicEl = el('topic');
+  const ownerEl = el('owner');
+  const durationEl = el('duration');
+  const agendaStepEl = el('agendaStep');
+  const agendaBarEl = el('agendaBar');
+  const agendaListEl = el('agendaList');
+  const coachMsgEl = el('coachMsg');
+  const coachHintEl = el('coachHint');
+  const stateTagEl = el('stateTag');
+  const statusDotEl = el('statusDot');
+  const modeTagEl = el('modeTag');
+  const discussionToggleBtn = el('discussionToggle');
+
+  const bankedEl = el('banked');
+  const overrunEl = el('overrun');
+  const agendaHealthEl = el('agendaHealth');
+  const parkingCountEl = el('parkingCount');
+
+  // Ring math
+  const R = 52;
+  const C = 2*Math.PI*R;
+  ring.style.strokeDasharray = C.toFixed(2);
+
+  // State
+  let idx = 0;
+  let running = false;
+  let discussionMode = false;
+  let remaining = agenda[0].seconds;
+  let segmentInitial = agenda[0].seconds;
+  let tick = null;
+  let bankedSeconds = 0;
+  let totalOverrunSeconds = 0;
+  let agendaHealth = 100;
+  let parkingCount = 0;
+
+  // Helpers
+  const pad2 = (n)=> String(n).padStart(2,'0');
+  const fmt = (sec)=> {
+    sec = Math.max(0, Math.floor(sec));
+    return `${pad2(Math.floor(sec/60))}:${pad2(sec%60)}`;
+  };
+
+  const setStatusColor = (state) => {
+    // state: green | amber | red | blue
+    const css = getComputedStyle(document.documentElement);
+    const colors = {
+      green: css.getPropertyValue('--green').trim(),
+      amber: css.getPropertyValue('--amber').trim(),
+      red: css.getPropertyValue('--red').trim(),
+      blue: css.getPropertyValue('--blue').trim(),
+    };
+    statusDotEl.style.background = colors[state] || colors.green;
+    const glow = {
+      green:'rgba(33,166,122,.12)',
+      amber:'rgba(245,158,11,.16)',
+      red:'rgba(239,68,68,.16)',
+      blue:'rgba(0,82,255,.14)'
+    };
+    statusDotEl.style.boxShadow = `0 0 0 6px ${glow[state] || glow.green}`;
+
+    // ring stroke is gradient by default; we tint by swapping gradient stops via CSS var workaround: just set ring stroke directly
+    if(state === 'blue') ring.style.stroke = colors.blue;
+    else if(state === 'red') ring.style.stroke = colors.red;
+    else if(state === 'amber') ring.style.stroke = colors.amber;
+    else ring.style.stroke = 'url(#ringGrad)';
+  };
+
+  function renderAgendaList(){
+    agendaListEl.innerHTML='';
+    agenda.forEach((a, i)=>{
+      const div = document.createElement('div');
+      div.className = 'item' + (i===idx ? ' active' : '');
+      div.tabIndex = 0;
+      div.innerHTML = `
+        <div class="left">
+          <div class="title">${i+1}. ${a.title}</div>
+          <div class="who">${a.owner}</div>
+        </div>
+        <div class="dur">${fmt(a.seconds)}</div>
+      `;
+      div.addEventListener('click', ()=>{ goTo(i); });
+      agendaListEl.appendChild(div);
+    });
+  }
+
+  function updateHeader(){
+    const a = agenda[idx];
+    topicEl.textContent = a.title;
+    ownerEl.textContent = a.owner;
+    durationEl.textContent = fmt(segmentInitial);
+
+    // Agenda progress
+    agendaStepEl.textContent = `${idx+1} / ${agenda.length}`;
+    agendaBarEl.style.width = `${((idx+1)/agenda.length)*100}%`;
+
+    // Mode tag
+    const isDiscussion = (a.mode === 'discussion') || discussionMode;
+    modeTagEl.textContent = isDiscussion ? 'DISCUSSION MODE' : 'PRESENTER MODE';
+    modeTagEl.className = 'tag ' + (isDiscussion ? 'blue' : '');
+
+    // State tag
+    stateTagEl.textContent = running ? 'RUNNING' : 'READY';
+
+    renderAgendaList();
+  }
+
+  function updateCoach(){
+    const a = agenda[idx];
+    const pct = segmentInitial ? (remaining/segmentInitial) : 0;
+    const minsLeft = remaining/60;
+
+    // discussion segments: calm blue
+    if((a.mode === 'discussion') || discussionMode){
+      coachMsgEl.textContent = 'OPEN DISCUSSION';
+      coachHintEl.textContent = 'Moderator can pause, capture parking lot, and steer back to decisions.';
+      setStatusColor('blue');
+      return;
+    }
+
+    // coaching thresholds
+    if(remaining <= 0){
+      coachMsgEl.textContent = 'TIME UP';
+      coachHintEl.textContent = 'Park details. Move to the next section.';
+      setStatusColor('red');
+      return;
+    }
+    if(remaining <= 60){
+      coachMsgEl.textContent = 'FINAL 60 SECONDS';
+      coachHintEl.textContent = 'One key takeaway + one next step.';
+      setStatusColor('red');
+      return;
+    }
+    if(remaining <= 120){
+      coachMsgEl.textContent = '2 MIN LEFT';
+      coachHintEl.textContent = 'Start landing your key points.';
+      setStatusColor('amber');
+      return;
+    }
+    if(pct <= 0.40){
+      coachMsgEl.textContent = 'WATCH THE CLOCK';
+      coachHintEl.textContent = 'Trim details. Keep only what leadership needs.';
+      setStatusColor('amber');
+      return;
+    }
+
+    coachMsgEl.textContent = 'ON TRACK';
+    coachHintEl.textContent = 'Keep it crisp. One takeaway, one transition.';
+    setStatusColor('green');
+  }
+
+  function updateRing(){
+    timeLeftEl.textContent = fmt(remaining);
+    const ratio = segmentInitial ? Math.max(0, Math.min(1, remaining/segmentInitial)) : 0;
+    ring.style.strokeDashoffset = ((1-ratio)*C).toFixed(2);
+  }
+
+  function updateKPIs(){
+    bankedEl.textContent = fmt(bankedSeconds);
+    overrunEl.textContent = fmt(totalOverrunSeconds);
+    agendaHealthEl.textContent = `${Math.max(0, Math.round(agendaHealth))}%`;
+    parkingCountEl.textContent = String(parkingCount);
+  }
+
+  function stopTimer(){
+    running = false;
+    if(tick){ clearInterval(tick); tick=null; }
+    el('startPauseBtn').innerHTML = 'Start <span class="kbd">Space</span>';
+    stateTagEl.textContent = 'READY';
+    updateCoach();
+  }
+
+  function startTimer(){
+    if(running) return;
+    running = true;
+    el('startPauseBtn').innerHTML = 'Pause <span class="kbd">Space</span>';
+    stateTagEl.textContent = 'RUNNING';
+
+    tick = setInterval(()=>{
+      const a = agenda[idx];
+      // In discussion mode, we still show the segment but do not count down.
+      if((a.mode === 'discussion') || discussionMode){
+        updateCoach();
+        return;
+      }
+
+      remaining -= 1;
+
+      // Track overrun — banking logic:
+      // Each second of overrun is first absorbed by bankedSeconds.
+      // Only once the bank is empty does it count as true overrun.
+      if(remaining < 0){
+        if(bankedSeconds >= 1){
+          // Absorb this overrun second from the bank
+          bankedSeconds -= 1;
+        } else {
+          // Bank exhausted — count as real overrun
+          totalOverrunSeconds += 1;
+          // Health penalty: 1 point per 10 seconds of real overrun
+          if(totalOverrunSeconds % 10 === 0) agendaHealth = Math.max(0, agendaHealth - 1);
+        }
+      }
+
+      updateRing();
+      updateCoach();
+      updateKPIs();
+
+    }, 1000);
+  }
+
+  function toggleStartPause(){
+    if(running) stopTimer();
+    else startTimer();
+  }
+
+  function goTo(i){
+    // Bank time if leaving a segment early (remaining > 0).
+    // Banking applies whether the timer is running OR paused —
+    // any unused time from this segment is saved for the group.
+    if(remaining > 0){
+      bankedSeconds += remaining;
+    }
+
+    idx = Math.max(0, Math.min(agenda.length-1, i));
+    segmentInitial = agenda[idx].seconds;
+    remaining = segmentInitial;
+
+    // Default discussion mode OFF unless segment is leadership
+    discussionMode = false;
+
+    stopTimer();
+    updateHeader();
+    updateRing();
+    updateCoach();
+    updateKPIs();
+  }
+
+  function next(){ goTo(idx+1); }
+  function prev(){ goTo(idx-1); }
+
+  function adjust(seconds){
+    remaining += seconds;
+    segmentInitial = Math.max(60, segmentInitial + seconds); // keep ring stable; minimum 60s
+    durationEl.textContent = fmt(segmentInitial);
+    updateRing();
+    updateCoach();
+  }
+
+  function resetSegment(){
+    remaining = agenda[idx].seconds;
+    segmentInitial = agenda[idx].seconds;
+    updateRing();
+    updateCoach();
+    updateHeader();
+  }
+
+  function toggleDiscussion(){
+    discussionMode = !discussionMode;
+    updateHeader();
+    updateCoach();
+  }
+
+  // Parking
+  function parkingPlus(){ parkingCount += 1; updateKPIs(); }
+  function parkingMinus(){ parkingCount = Math.max(0, parkingCount-1); updateKPIs(); }
+
+  // Fullscreen
+  async function toggleFullscreen(){
+    try{
+      if(!document.fullscreenElement){
+        await document.documentElement.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch(e){
+      console.warn(e);
+    }
+  }
+
+  // Wire events
+  el('startPauseBtn').addEventListener('click', toggleStartPause);
+  el('nextBtn').addEventListener('click', next);
+  el('prevBtn').addEventListener('click', prev);
+  el('minus30').addEventListener('click', ()=>adjust(-30));
+  el('plus30').addEventListener('click', ()=>adjust(30));
+  el('resetSegment').addEventListener('click', resetSegment);
+  discussionToggleBtn.addEventListener('click', toggleDiscussion);
+  el('parkingPlus').addEventListener('click', parkingPlus);
+  el('parkingMinus').addEventListener('click', parkingMinus);
+  el('fullscreenBtn').addEventListener('click', toggleFullscreen);
+
+  // Keyboard shortcuts
+  window.addEventListener('keydown', (e)=>{
+    if(e.code === 'Space'){
+      e.preventDefault();
+      toggleStartPause();
+    }
+    if(e.key === 'ArrowRight') next();
+    if(e.key === 'ArrowLeft') prev();
+    if(e.key.toLowerCase() === 'd') toggleDiscussion();
+    if(e.key.toLowerCase() === 'f') toggleFullscreen();
+    if(e.key.toLowerCase() === 'p') parkingPlus();
+  });
+
+  // Init
+  renderAgendaList();
+  updateHeader();
+  updateRing();
+  updateCoach();
+  updateKPIs();
+
+</script>
+<noscript><img src="https://storage.abby.abb.com/akam/13/pixel_442646d0?a=dD00YjA5MDY3YmM1NWE5ODZjOThhM2ZmNjBhYjhkYjY2YjBkMzg3YjNmJmpzPW9mZg==" style="visibility: hidden; position: absolute; left: -999px; top: -999px;" /></noscript><noscript><img src="https://storage.abby.abb.com/akam/13/pixel_442646d0?a=dD00YjA5MDY3YmM1NWE5ODZjOThhM2ZmNjBhYjhkYjY2YjBkMzg3YjNmJmpzPW9mZg==" style="visibility: hidden; position: absolute; left: -999px; top: -999px;" /></noscript></body>
+</html>

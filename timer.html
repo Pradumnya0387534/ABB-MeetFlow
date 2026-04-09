@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digitalization Review - Time Keeper</title>
+
+  <!-- Auth guard: runs before anything renders -->
+  <script src="js/auth.js"></script>
+  <script>
+    var __session = requireAuth();
+  </script>
+
+  <link rel="stylesheet" href="css/abb-theme.css" />
+
+  <style>
+    html, body { height: 100%; overflow: hidden; }
+    #timer-frame {
+      display:  block;
+      position: fixed;
+      top:      var(--nav-height, 52px);
+      left:     0;
+      width:    100vw;
+      height:   calc(100vh - var(--nav-height, 52px));
+      border:   none;
+      margin:   0;
+      padding:  0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ABB NAV BAR — sits above the iframe, never inside it -->
+  <nav class="abb-nav">
+    <div class="nav-left">
+      <img src="assets/eto-logo.png" alt="Engineered to Outrun" class="nav-logo"
+        onerror="this.style.display='none';document.getElementById('nav-fb').style.display='block';" />
+      <span id="nav-fb" class="nav-logo-fallback" style="display:none;">ABB</span>
+      <div class="nav-divider"></div>
+      <span class="nav-title">Digitalization Review &middot; H2 2025</span>
+    </div>
+    <div class="nav-right">
+      <span class="nav-user"        id="nav-username"></span>
+      <span class="nav-role-badge"  id="nav-role-badge"></span>
+      <!-- Admin-only link to Agenda Manager -->
+      <a id="admin-link" href="admin.html" class="btn btn-ghost"
+         style="display:none;padding:5px 12px;font-size:0.78rem;">&#9776; Manage Agenda</a>
+      <button class="nav-logout-btn" onclick="logout()">Sign Out</button>
+    </div>
+  </nav>
+
+  <!--
+    ═══════════════════════════════════════════════════════════
+    TIMER IFRAME
+    The original Digital H2 Review UI.html is loaded untouched.
+    Its HTML, CSS, layout, colours, and all visual code are
+    100% unchanged. The only injection is a postMessage sent
+    from outside the iframe that overwrites the `agenda` array
+    in memory (not in the file), then re-renders the list.
+    ═══════════════════════════════════════════════════════════
+  -->
+  <iframe
+    id="timer-frame"
+    src="Digital H2 Review UI.html"
+    title="Digitalization Review Time Keeper"
+    allowfullscreen
+    sandbox="allow-scripts allow-same-origin allow-forms"
+  ></iframe>
+
+  <script>
+    /* ── Populate nav ───────────────────────────────────────── */
+    (function () {
+      var s = __session;
+      if (!s) return;
+
+      var userEl  = document.getElementById('nav-username');
+      var badgeEl = document.getElementById('nav-role-badge');
+      var adminLk = document.getElementById('admin-link');
+
+      if (userEl)  userEl.textContent  = s.label || s.username;
+      if (badgeEl) {
+        badgeEl.textContent = s.role;
+        badgeEl.classList.add(s.role);
+      }
+      // Show "Manage Agenda" button only for admin
+      if (adminLk && s.role === 'admin') {
+        adminLk.style.display = 'inline-flex';
+      }
+    })();
+
+    /* ── Agenda sync ────────────────────────────────────────── */
+    /*
+     * The inner timer file (Digital H2 Review UI.html) now reads
+     * agenda data directly from localStorage at initialization.
+     * No injection from the wrapper is required.
+     * Admin page saves to localStorage key "digi_review_agenda".
+     * Timer reads the same key on page load.
+     * If localStorage is empty, the timer uses its built-in fallback.
+     */
+  </script>
+
+</body>
+</html>

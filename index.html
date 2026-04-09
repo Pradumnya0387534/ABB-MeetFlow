@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digitalization Review – Sign In</title>
+
+  <!--
+    Quick auth-redirect: runs before any layout renders.
+    If a valid session already exists, skip the login page entirely.
+  -->
+  <script>
+    (function () {
+      try {
+        var raw = localStorage.getItem('digi_review_session');
+        if (raw && JSON.parse(raw)) {
+          window.location.replace('timer.html');
+        }
+      } catch (e) { /* ignore parse errors */ }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="css/abb-theme.css" />
+</head>
+<body class="login-page">
+
+  <div class="login-wrapper">
+
+    <!-- ── LEFT PANEL: Theme banner (login page only) ───────── -->
+    <div class="login-banner">
+      <img
+        src="assets/theme-banner.png"
+        alt="Digitalization Review H2 2025"
+        class="banner-img"
+        onerror="this.style.display='none'"
+      />
+      <div class="banner-overlay">
+        <img
+          src="assets/eto-logo.png"
+          alt="Engineered to Outrun"
+          class="eto-logo-banner"
+          onerror="this.style.display='none'"
+        />
+        <div class="banner-text">
+          <p class="banner-eyebrow">ABB Digitalization</p>
+          <h2>H2 2025 Review<br />&amp; Plan for 2026</h2>
+          <p class="banner-sub">Meeting Time Keeper</p>
+        </div>
+        <div class="banner-accent-bar"></div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT PANEL: Login form ──────────────────────────── -->
+    <div class="login-panel">
+      <div class="login-card">
+
+        <div class="login-header">
+          <img
+            src="assets/eto-logo.png"
+            alt="Engineered to Outrun"
+            class="eto-logo-form"
+            onerror="this.style.display='none'"
+          />
+          <h1>Welcome Back</h1>
+          <p>Sign in to access the session</p>
+        </div>
+
+        <form id="login-form" class="login-form" novalidate autocomplete="off">
+
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Enter username"
+              autocomplete="username"
+              spellcheck="false"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter password"
+                autocomplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                class="toggle-pw"
+                aria-label="Toggle password visibility"
+                tabindex="-1"
+                onclick="togglePassword()"
+              >&#128065;</button>
+            </div>
+          </div>
+
+          <div id="login-error" class="login-error" role="alert" aria-live="polite"></div>
+
+          <button type="submit" class="btn btn-primary btn-full" id="signin-btn">
+            <span id="btn-label">Sign In</span>
+          </button>
+
+        </form>
+
+        <div class="login-footer">
+          <span>Digitalization Review Suite &nbsp;·&nbsp; Internal Use Only</span>
+        </div>
+
+      </div>
+    </div>
+    <!-- ── END RIGHT PANEL ─────────────────────────────────── -->
+
+  </div><!-- .login-wrapper -->
+
+  <script src="js/auth.js"></script>
+  <script>
+    /* ── Login form handler ───────────────────────────────── */
+    var form     = document.getElementById('login-form');
+    var errorEl  = document.getElementById('login-error');
+    var btnLabel = document.getElementById('btn-label');
+    var signinBtn = document.getElementById('signin-btn');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      var username = document.getElementById('username').value.trim();
+      var password = document.getElementById('password').value;
+
+      // Clear previous error
+      errorEl.textContent = '';
+      errorEl.classList.remove('visible');
+
+      // Brief loading state
+      signinBtn.disabled = true;
+      btnLabel.textContent = 'Signing in…';
+
+      setTimeout(function () {
+        var redirect = login(username, password);
+
+        if (redirect) {
+          window.location.href = redirect;
+        } else {
+          errorEl.textContent = 'Invalid username or password. Please try again.';
+          errorEl.classList.add('visible');
+          document.getElementById('password').value = '';
+          document.getElementById('password').focus();
+          signinBtn.disabled = false;
+          btnLabel.textContent = 'Sign In';
+        }
+      }, 300); // small delay for UX feel
+    });
+
+    /* ── Password visibility toggle ──────────────────────── */
+    function togglePassword() {
+      var pw = document.getElementById('password');
+      pw.type = pw.type === 'password' ? 'text' : 'password';
+    }
+  </script>
+
+</body>
+</html>
