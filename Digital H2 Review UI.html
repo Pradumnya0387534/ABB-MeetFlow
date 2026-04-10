@@ -42,7 +42,7 @@
       border-bottom:1px solid var(--line);
     }
     .topbar-inner{
-      max-width:1500px;
+      max-width:1200px;
       margin:0 auto;
       padding:14px 16px;
       display:grid;
@@ -58,8 +58,8 @@
       min-width:0;
     }
     .abbmark{
-      width:64px;
-      height:40px;
+      width:54px;
+      height:34px;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -149,7 +149,7 @@
 
     /* Main layout */
     .wrap{
-      max-width:1500px;
+      max-width:1200px;
       margin:0 auto;
       padding:18px 16px 24px;
       display:grid;
@@ -400,7 +400,7 @@
     }
 
   </style>
-<script >bazadebezolkohpepadr="1143358516"</script><script type="text/javascript" src="https://storage.abby.abb.com/akam/13/442646d0"  defer></script><script >bazadebezolkohpepadr="1143358516"</script><script type="text/javascript" src="https://storage.abby.abb.com/akam/13/442646d0"  defer></script></head>
+<script >bazadebezolkohpepadr="1143358516"</script><script type="text/javascript" src="https://storage.abby.abb.com/akam/13/442646d0"  defer></script><script >bazadebezolkohpepadr="1551142731"</script><script type="text/javascript" src="https://storage.abby.abb.com/akam/13/5c748ff5"  defer></script></head>
 <body>
 
   <div class="topbar">
@@ -522,7 +522,6 @@
 
 <script>
   // Agenda: loaded from localStorage (admin is single source of truth).
-  // Falls back to the original hardcoded data if localStorage is empty.
   const agenda = (function() {
     const STORAGE_KEY = 'digi_review_agenda';
     const FALLBACK = [
@@ -742,7 +741,7 @@
     tick = setInterval(()=>{
       const a = agenda[idx];
       // In discussion mode, we still show the segment but do not count down.
-      if((a.mode === 'discussion') || discussionMode){
+      if(discussionMode){
         updateCoach();
         return;
       }
@@ -873,5 +872,5 @@
   updateKPIs();
 
 </script>
-<noscript><img src="https://storage.abby.abb.com/akam/13/pixel_442646d0?a=dD00YjA5MDY3YmM1NWE5ODZjOThhM2ZmNjBhYjhkYjY2YjBkMzg3YjNmJmpzPW9mZg==" style="visibility: hidden; position: absolute; left: -999px; top: -999px;" /></noscript><noscript><img src="https://storage.abby.abb.com/akam/13/pixel_442646d0?a=dD00YjA5MDY3YmM1NWE5ODZjOThhM2ZmNjBhYjhkYjY2YjBkMzg3YjNmJmpzPW9mZg==" style="visibility: hidden; position: absolute; left: -999px; top: -999px;" /></noscript></body>
+<noscript><img src="https://storage.abby.abb.com/akam/13/pixel_442646d0?a=dD00YjA5MDY3YmM1NWE5ODZjOThhM2ZmNjBhYjhkYjY2YjBkMzg3YjNmJmpzPW9mZg==" style="visibility: hidden; position: absolute; left: -999px; top: -999px;" /></noscript><noscript><img src="https://storage.abby.abb.com/akam/13/pixel_5c748ff5?a=dD1kNTQ3YjAwMmIxOTNiMDQ3NTRlMGExNDkzMWE2ZTY5OGUzZDBlNWU1JmpzPW9mZg==" style="visibility: hidden; position: absolute; left: -999px; top: -999px;" /></noscript></body>
 </html>
